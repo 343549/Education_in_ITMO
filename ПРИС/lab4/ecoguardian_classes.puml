@@ -1,0 +1,138 @@
+@startuml
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+title Диаграмма классов модуля аналитики и прогнозирования системы EcoGuardian
+
+package "Модель данных" {
+    class SensorReading {
+        -Long id
+        -Long sensorId
+        -Double temperature
+        -Double humidity
+        -Double airQuality
+        -Double windSpeed
+        -DateTime timestamp
+        -String location
+        +validate() : Boolean
+        +getNormalizedValue() : Double
+    }
+    
+    class Sensor {
+        -Long id
+        -String name
+        -String type
+        -String location
+        -Double latitude
+        -Double longitude
+        -Boolean isActive
+        +activate() : void
+        +deactivate() : void
+        +getLocation() : String
+    }
+    
+    class Forecast {
+        -Long id
+        -Long sensorId
+        -String threatType
+        -Double probability
+        -DateTime forecastTime
+        -DateTime validUntil
+        -String severity
+        +isValid() : Boolean
+        +getRiskLevel() : String
+    }
+    
+    class MLModel {
+        -Long id
+        -String modelType
+        -String algorithm
+        -Blob modelData
+        -Double accuracy
+        -DateTime trainedAt
+        -Boolean isActive
+        +predict(data: SensorReading[]) : Forecast
+        +retrain(trainingData: SensorReading[]) : void
+        +evaluate(testData: SensorReading[]) : Double
+    }
+    
+    class Anomaly {
+        -Long id
+        -Long sensorReadingId
+        -String anomalyType
+        -Double deviation
+        -DateTime detectedAt
+        -String status
+        +markAsResolved() : void
+        +getSeverity() : String
+    }
+    
+    class Alert {
+        -Long id
+        -String alertType
+        -String message
+        -String severity
+        -DateTime createdAt
+        -DateTime sentAt
+        -Boolean isAcknowledged
+        +send() : void
+        +acknowledge() : void
+    }
+}
+
+package "Сервисы" {
+    class DataCollectionService {
+        -KafkaConsumer consumer
+        -DataValidator validator
+        +receiveData() : void
+        +validateData(reading: SensorReading) : Boolean
+        +saveToDatabase(reading: SensorReading) : void
+    }
+    
+    class AnalysisService {
+        -AnomalyDetector detector
+        -StatisticalAnalyzer analyzer
+        +detectAnomalies(readings: SensorReading[]) : Anomaly[]
+        +performStatisticalAnalysis(readings: SensorReading[]) : Map<String, Double>
+        +generateReport() : String
+    }
+    
+    class ForecastingService {
+        -MLModel activeModel
+        -ModelRepository repository
+        +generateForecast(sensorId: Long) : Forecast
+        +updateModel(modelId: Long) : void
+        +evaluateModelAccuracy() : Double
+    }
+    
+    class NotificationService {
+        -AlertGenerator generator
+        -NotificationRouter router
+        +createAlert(forecast: Forecast) : Alert
+        +sendNotification(alert: Alert) : void
+        +routeToRecipients(alert: Alert) : void
+    }
+}
+
+' Связи между классами
+SensorReading "1" --> "1" Sensor : принадлежит
+Forecast "1" --> "1" Sensor : для датчика
+Forecast "1" --> "*" MLModel : использует
+Anomaly "1" --> "1" SensorReading : обнаружена в
+Alert "1" --> "*" Forecast : на основе
+Alert "1" --> "*" Anomaly : на основе
+
+DataCollectionService --> SensorReading : создает
+DataCollectionService --> Sensor : использует
+AnalysisService --> SensorReading : анализирует
+AnalysisService --> Anomaly : создает
+ForecastingService --> Forecast : создает
+ForecastingService --> MLModel : использует
+ForecastingService --> SensorReading : обрабатывает
+NotificationService --> Alert : создает
+NotificationService --> Forecast : использует
+NotificationService --> Anomaly : использует
+
+@enduml
+

@@ -1,0 +1,113 @@
+@startuml
+!theme plain
+skinparam componentStyle rectangle
+skinparam linetype ortho
+
+title Диаграмма компонентов модуля аналитики и прогнозирования системы EcoGuardian
+
+package "Интерфейс пользователя" {
+    component [Веб-клиент] as WebClient
+    component [API Gateway] as APIGateway
+    component [Дашборд визуализации] as Dashboard
+}
+
+package "Модуль аналитики" {
+    component [Движок потоковой обработки] as StreamEngine
+    component [Прием данных] as DataReceiver
+    component [Валидация данных] as DataValidator
+    component [Агрегация данных] as DataAggregator
+    
+    component [Сервис анализа] as AnalysisService
+    component [Детектор аномалий] as AnomalyDetector
+    component [Статистический анализ] as StatisticalAnalysis
+    
+    component [Сервис прогнозирования] as ForecastingService
+    component [ML-модель] as MLModel
+    component [Оценка точности] as AccuracyAssessment
+    
+    component [Сервис оповещений] as NotificationService
+    component [Генератор предупреждений] as AlertGenerator
+    component [Маршрутизация уведомлений] as NotificationRouter
+}
+
+package "Хранилище данных" {
+    database "База данных мониторинга" as MonitoringDB
+    component [Таблица показаний датчиков] as SensorReadingsTable
+    component [Таблица метаданных датчиков] as SensorMetadataTable
+    
+    database "База моделей и результатов" as ModelsDB
+    component [Таблица моделей ML] as MLModelsTable
+    component [Таблица прогнозов] as ForecastsTable
+    component [Таблица результатов анализа] as AnalysisResultsTable
+}
+
+' Связи между компонентами
+WebClient --> APIGateway : HTTP/HTTPS
+APIGateway --> Dashboard : REST API
+APIGateway --> StreamEngine : REST API
+APIGateway --> AnalysisService : REST API
+APIGateway --> ForecastingService : REST API
+APIGateway --> NotificationService : REST API
+
+Dashboard --> AnalysisService : Запрос данных
+Dashboard --> ForecastingService : Запрос прогнозов
+Dashboard --> NotificationService : Получение предупреждений
+
+StreamEngine --> DataReceiver
+StreamEngine --> DataValidator
+StreamEngine --> DataAggregator
+DataReceiver --> MonitoringDB : Запись данных
+DataValidator --> MonitoringDB : Проверка данных
+DataAggregator --> MonitoringDB : SQL запросы
+
+AnalysisService --> AnomalyDetector
+AnalysisService --> StatisticalAnalysis
+AnomalyDetector --> MonitoringDB : SQL запросы
+AnomalyDetector --> ModelsDB : Запись результатов
+StatisticalAnalysis --> MonitoringDB : SQL запросы
+StatisticalAnalysis --> ModelsDB : Запись результатов
+
+ForecastingService --> MLModel
+ForecastingService --> AccuracyAssessment
+MLModel --> MonitoringDB : SQL запросы
+MLModel --> ModelsDB : Загрузка моделей
+MLModel --> ModelsDB : Запись прогнозов
+AccuracyAssessment --> ModelsDB : SQL запросы
+
+NotificationService --> AlertGenerator
+NotificationService --> NotificationRouter
+AlertGenerator --> ModelsDB : SQL запросы
+NotificationRouter --> Dashboard : WebSocket
+
+MonitoringDB --> SensorReadingsTable
+MonitoringDB --> SensorMetadataTable
+ModelsDB --> MLModelsTable
+ModelsDB --> ForecastsTable
+ModelsDB --> AnalysisResultsTable
+
+note right of StreamEngine
+  Вложенный компонент:
+  обработка потоковых данных
+  с датчиков в реальном времени
+end note
+
+note right of AnalysisService
+  Вложенный компонент:
+  обнаружение аномалий и
+  статистический анализ
+end note
+
+note right of ForecastingService
+  Вложенный компонент:
+  ML-модели для прогнозирования
+  и оценка их точности
+end note
+
+note right of NotificationService
+  Вложенный компонент:
+  генерация и маршрутизация
+  предупреждений
+end note
+
+@enduml
+
