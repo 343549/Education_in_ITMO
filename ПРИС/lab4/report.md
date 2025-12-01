@@ -223,7 +223,11 @@ end note
 
 ### Скриншот визуализации скрипта
 
-_[Здесь должен быть размещен скриншот сгенерированной диаграммы. Для получения скриншота необходимо: 1) Открыть файл ecoguardian_components.puml в онлайн-редакторе PlantUML (http://www.plantuml.com/plantuml/) или 2) Сгенерировать изображение командой `plantuml ecoguardian_components.puml` и сделать скриншот]_
+
+<img width="1728" height="1323" alt="ecoguardian_classes" src="https://github.com/user-attachments/assets/f59b6c81-600b-4994-939a-1b55fc1fb5a2" />
+
+<img width="2838" height="786" alt="ecoguardian_components" src="https://github.com/user-attachments/assets/0082490c-ef47-4721-8508-1612fd69c5c8" />
+
 
 ### Пояснения к результату генерации и изменениям
 
@@ -254,4 +258,5 @@ _[Здесь должен быть размещен скриншот сгене�
    plantuml ecoguardian_components.puml
    plantuml ecoguardian_classes.puml
    ```
+
 
