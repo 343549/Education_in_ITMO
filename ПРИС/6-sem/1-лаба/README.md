@@ -36,13 +36,17 @@ EcoGuardian представляет собой веб‑сервис для м�
 Для иллюстрации работы сервиса в отчёт можно включить следующие скриншоты:
 
 - **Рисунок 1 – Главная страница EcoGuardian (список регионов)**  
-  ![Главная страница EcoGuardian](screenshots/main_page.png)
+  ![Главная страница EcoGuardian](<img width="2450" height="1112" alt="admin-page" src="https://github.com/user-attachments/assets/0b386137-7b30-47d0-aafa-9b28bc354746" />
+
+)
 
 - **Рисунок 2 – Страница региона с обновлением прогноза риска**  
-  ![Страница региона и прогноз риска](screenshots/region_detail.png)
+  ![Страница региона и прогноз риска](<img width="2754" height="716" alt="risk-page" src="https://github.com/user-attachments/assets/2ca49ee4-27d5-4a9c-b261-9bb174fb0dc4" />
+)
 
 - **Рисунок 3 – Административная панель Django (модели мониторинга)**  
-  ![Административная панель Django](screenshots/admin_panel.png)
+  ![Административная панель Django](<img width="3042" height="672" alt="monitorin-page" src="https://github.com/user-attachments/assets/fd0a21e7-378a-47dd-a007-fb73861e6c85" />
+)
 
 > Примечание: файлы изображений рекомендуется сохранить в папку `screenshots/` рядом с данным README и при экспорте отчёта в PDF вставить их как отдельные рисунки с подписями.
 
@@ -59,10 +63,12 @@ EcoGuardian представляет собой веб‑сервис для м�
 ### Диаграммы
 
 - **Рисунок 4 – Архитектура системы EcoGuardian**  
-  ![Архитектурная диаграмма EcoGuardian](diagrams/architecture.png)
+  ![Архитектурная диаграмма EcoGuardian](<img width="1024" height="1536" alt="Архитектура" src="https://github.com/user-attachments/assets/4cb67d8b-3e68-41e7-baf7-67bb3368a586" />
+)
 
 - **Рисунок 5 – ER‑диаграмма данных EcoGuardian**  
-  ![ER‑диаграмма данных EcoGuardian](diagrams/er_diagram.png)
+  ![ER‑диаграмма данных EcoGuardian](<img width="1210" height="1002" alt="диаграмма данных" src="https://github.com/user-attachments/assets/3c87f31e-047f-4e9b-a9c5-51b02239acd1" />
+)
 
 > Примечание: архитектурную диаграмму и ER‑диаграмму можно построить в любом графическом редакторе (например, draw.io, PowerPoint, Visio) на основе описания в данном README и сохранить в папку `diagrams/`.
 
