@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Регион: {{ region.name }}</h2>
+<p>{{ region.description|default:"Описание отсутствует." }}</p>
+
+<p>
+    <a href="{% url 'analyze_region' region.id %}" class="button">
+        Обновить прогноз риска
+    </a>
+</p>
+
+<h3>Последние предупреждения</h3>
+{% if alerts %}
+    <ul>
+        {% for alert in alerts %}
+            <li>
+                <strong>{{ alert.get_risk_level_display }}</strong>
+                ({{ alert.created_at }}): {{ alert.message }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Для региона ещё не создавались предупреждения.</p>
+{% endif %}
+{% endblock %}
