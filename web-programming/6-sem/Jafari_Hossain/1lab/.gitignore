@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+app.db
+test_app.db
+alembic/versions/__pycache__/
