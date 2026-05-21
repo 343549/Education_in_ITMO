@@ -1,0 +1,27 @@
+@startuml ecoguardian_context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title System Context — EcoGuardian (вариант 2)
+
+Person(operator, "Оператор ЦУР", "Просмотр карты, прогнозов, подтверждение оповещений")
+Person(analyst, "Аналитик Минэкологии", "Настройка моделей, анализ трендов")
+Person(responder, "Специалист реагирования", "Инциденты, планы эвакуации, мероприятия")
+
+System(ecoguardian, "EcoGuardian", "Микросервисная ИС мониторинга экологии, прогноза рисков и реагирования")
+
+System_Ext(sensors, "Сеть IoT-датчиков", "Поток измерений (HTTP/MQTT)")
+System_Ext(minek, "ИС Минэкологии", "Справочники, отчётность, SSO (опционально)")
+System_Ext(notify, "Канал оповещений", "SMS / e-mail шлюз оператора связи")
+System_Ext(meteo, "Внешняя метеослужба", "Погодные данные (REST)")
+
+Rel(sensors, ecoguardian, "Телеметрия", "HTTPS / MQTT")
+Rel(operator, ecoguardian, "Работа через веб-UI", "HTTPS")
+Rel(analyst, ecoguardian, "Аналитика, ML", "HTTPS")
+Rel(responder, ecoguardian, "Инциденты", "HTTPS")
+Rel(ecoguardian, minek, "События, отчёты", "REST / файлы")
+Rel(ecoguardian, notify, "Доставка оповещений", "REST")
+Rel(ecoguardian, meteo, "Доп. данные", "REST")
+
+@enduml
