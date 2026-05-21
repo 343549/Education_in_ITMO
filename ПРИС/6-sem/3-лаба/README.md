@@ -7,7 +7,7 @@
 
 > **Примечание по заданию:** в формулировке лабораторной требуется **архитектурный проект** (описание и диаграммы), а не обязательная реализация кода. Прототип Django из первой лабораторной работы в данном отчёте **не разрабатывается**; при необходимости на защите его можно упомянуть отдельно как учебный монолитный MVP.
 
-**Диаграммы (PlantUML):** `diagrams/context.puml`, `diagrams/services.puml`, `diagrams/deployment.puml`, `diagrams/sequence_alert.puml`, `diagrams/domain_catalog.puml`.
+**Диаграммы:** `diagrams/*.png` (исходники PlantUML — `diagrams/*.puml`).
 
 ---
 
@@ -58,9 +58,7 @@
 
 ### 1.3. Контекстная диаграмма (System Context)
 
-```plantuml
-!include diagrams/context.puml
-```
+![Контекстная диаграмма EcoGuardian](diagrams/context.png)
 
 **Описание.** Система EcoGuardian находится в центре экосистемы: слева — поток данных от IoT-датчиков; справа — интеграция с **ИС Минэкологии** (отчёты, справочники), каналом SMS/e-mail и опционально метеослужбой. Пользователи: оператор регионального ЦУР, аналитик ведомства, специалист по реагированию. Все взаимодействия с UI идут через единую точку входа (API Gateway).
 
@@ -85,7 +83,9 @@
 
 ### 2.2. Доменные модели (ключевые агрегаты)
 
-**Catalog** — см. `diagrams/domain_catalog.puml`.
+**Catalog** — доменная модель каталога и телеметрии:
+
+![Доменная модель Catalog & Monitoring](diagrams/domain_catalog.png)
 
 **Risk Analytics**
 
@@ -122,7 +122,9 @@
 | `alert.escalated` | alerting-service / API | incident-service | Эскалация в инцидент |
 | `incident.opened` | incident-service | Минэкологии (ACL) | Начато реагирование |
 
-**Процесс 1: «Прогноз → оповещение»** — оператор инициирует анализ; analytics публикует `forecast.created`; alerting создаёт Alert и инициирует доставку (диаграмма последовательности: `diagrams/sequence_alert.puml`).
+**Процесс 1: «Прогноз → оповещение»** — оператор инициирует анализ; analytics публикует `forecast.created`; alerting создаёт Alert и инициирует доставку.
+
+![Диаграмма последовательности: прогноз → оповещение → инцидент](diagrams/sequence_alert.png)
 
 **Процесс 2: «Оповещение → инцидент»** — команда `EscalateAlert`; incident-service создаёт Incident, связывает с Alert и Region; далее внутри агрегата добавляются EvacuationPlan и MitigationAction.
 
@@ -149,9 +151,7 @@
 
 ### 3.2. Диаграмма взаимодействия сервисов
 
-```plantuml
-!include diagrams/services.puml
-```
+![Контейнерная диаграмма микросервисов EcoGuardian](diagrams/services.png)
 
 **Синхронные связи:** клиент → api-gateway → сервисы (REST/JSON). analytics-service → telemetry-service (агрегаты за окно времени). alerting-service → внешний SMS через ACL.
 
@@ -435,7 +435,9 @@ paths:
 | Брокер | **Apache Kafka** | Поток измерений и доменные события |
 | CI | GitLab CI / GitHub Actions | Сборка, тесты, push в Container Registry |
 
-Диаграмма: `diagrams/deployment.puml`.
+### 7.1.1. Диаграмма развёртывания
+
+![Развёртывание в Yandex Cloud, Docker Compose](diagrams/deployment.png)
 
 ### 7.2. Архитектура окружений
 
@@ -537,15 +539,13 @@ escalate alert. Для каждого: метод, путь, заголовки 
 
 ---
 
-## Приложение Б. Генерация диаграмм
+## Приложение Б. Исходники диаграмм
+
+PNG в отчёте сгенерированы из PlantUML. Для пересборки:
 
 ```bash
-# из каталога lab3, при установленном PlantUML
-plantuml diagrams/context.puml
-plantuml diagrams/services.puml
-plantuml diagrams/deployment.puml
-plantuml diagrams/sequence_alert.puml
-plantuml diagrams/domain_catalog.puml
+cd lab3
+plantuml diagrams/*.puml
 ```
 
 ---
