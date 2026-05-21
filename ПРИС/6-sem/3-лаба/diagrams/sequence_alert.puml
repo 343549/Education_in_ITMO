@@ -1,0 +1,29 @@
+@startuml ecoguardian_sequence_alert
+title Ключевой процесс: прогноз риска → оповещение → эскалация в инцидент
+
+actor "Оператор" as op
+participant "API Gateway" as gw
+participant "analytics-service" as an
+participant "Kafka" as k
+participant "alerting-service" as al
+participant "notification ACL" as nacl
+participant "incident-service" as inc
+database "PostgreSQL" as pg
+
+op -> gw : POST /regions/{id}/analyze
+gw -> an : запуск анализа (JWT)
+an -> an : агрегация + ML-прогноз
+an -> pg : сохранить RiskForecast
+an -> k : publish forecast.created
+k -> al : consume forecast.created
+al -> pg : создать Alert + AlertRecipient
+al -> k : publish alert.created
+al -> nacl : POST /send (SMS/e-mail)
+nacl --> al : delivery_status
+
+op -> gw : POST /alerts/{id}/escalate
+gw -> inc : создать Incident
+inc -> pg : Incident + связь с Alert
+inc -> k : publish incident.opened
+
+@enduml

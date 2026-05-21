@@ -1,0 +1,41 @@
+@startuml ecoguardian_domain_catalog
+title Доменная модель — контекст Catalog & Monitoring
+
+package "Catalog (catalog-service)" {
+  class Region <<Aggregate Root>> {
+    regionId: UUID
+    name: String
+    climateZone: String
+    population: int
+  }
+  class MonitoringStation {
+    stationId: UUID
+    name: String
+    lat, lon: Decimal
+  }
+  class Sensor {
+    sensorId: UUID
+    sensorType: String
+    unit: String
+    status: Enum
+  }
+  Region "1" *-- "many" MonitoringStation
+  MonitoringStation "1" *-- "many" Sensor
+}
+
+package "Telemetry (telemetry-service)" {
+  class Measurement <<Aggregate Root>> {
+    measurementId: UUID
+    measuredAt: DateTime
+    value: Decimal
+    qualityFlag: Enum
+  }
+  note bottom of Measurement
+    Инвариант: value в допустимом
+    диапазоне для типа датчика;
+    measuredAt не в будущем.
+  end note
+  Sensor ..> Measurement : produces
+}
+
+@enduml

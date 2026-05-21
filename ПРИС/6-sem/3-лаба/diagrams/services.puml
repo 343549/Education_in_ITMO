@@ -1,0 +1,55 @@
+@startuml ecoguardian_services
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_TOP_DOWN()
+
+title Контейнерная диаграмма — микросервисы EcoGuardian
+
+Person(user, "Пользователь")
+
+System_Boundary(eg, "EcoGuardian") {
+    Container(gw, "API Gateway", "Nginx / Kong", "Маршрутизация, JWT, rate limit")
+    Container(auth, "identity-service", "Python/FastAPI", "Пользователи, роли, JWT")
+    Container(cat, "catalog-service", "Python/FastAPI", "Регионы, станции, датчики")
+    Container(ing, "ingestion-service", "Python/FastAPI", "Приём телеметрии")
+    Container(tel, "telemetry-service", "Python/FastAPI", "Хранение и выдача измерений")
+    Container(an, "analytics-service", "Python + ML", "Аномалии, прогнозы риска")
+    Container(al, "alerting-service", "Python/FastAPI", "Оповещения, получатели")
+    Container(inc, "incident-service", "Python/FastAPI", "Инциденты, эвакуация, меры")
+    ContainerDb(pg_cat, "PostgreSQL", "Каталог, оповещения, инциденты, пользователи")
+    ContainerDb(ts, "TimescaleDB", "Временные ряды измерений")
+    ContainerDb(s3, "Object Storage", "Yandex Object Storage", "ML-модели, артефакты")
+    ContainerQueue(kafka, "Apache Kafka", "События домена")
+}
+
+System_Ext(sensors, "Датчики")
+System_Ext(sms, "SMS/e-mail")
+System_Ext(minek, "Минэкологии")
+
+Rel(user, gw, "HTTPS")
+Rel(sensors, ing, "POST /measurements")
+Rel(gw, auth, "синхр.")
+Rel(gw, cat, "синхр.")
+Rel(gw, tel, "синхр.")
+Rel(gw, an, "синхр.")
+Rel(gw, al, "синхр.")
+Rel(gw, inc, "синхр.")
+
+Rel(ing, kafka, "publish", "measurement.received")
+Rel(tel, kafka, "consume/publish")
+Rel(an, kafka, "consume/publish", "forecast.created")
+Rel(al, kafka, "consume/publish", "alert.created")
+Rel(inc, kafka, "consume", "alert.escalated")
+
+Rel(cat, pg_cat, "SQL")
+Rel(auth, pg_cat, "SQL")
+Rel(al, pg_cat, "SQL")
+Rel(inc, pg_cat, "SQL")
+Rel(tel, ts, "SQL")
+Rel(an, pg_cat, "SQL")
+Rel(an, s3, "S3 API")
+Rel(an, tel, "синхр.", "агрегаты")
+Rel(al, sms, "REST", "ACL")
+Rel(al, minek, "REST", "отчёт")
+
+@enduml

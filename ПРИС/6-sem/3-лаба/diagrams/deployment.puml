@@ -1,0 +1,43 @@
+@startuml ecoguardian_deployment
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Deployment.puml
+
+title Развёртывание — Yandex Cloud, Docker Compose (учебный контур)
+
+Deployment_Node(yc, "Yandex Cloud", "VPC") {
+    Deployment_Node(vm_app, "Compute Cloud VM", "8 vCPU, 32 GB RAM") {
+        Deployment_Node(compose, "Docker Compose") {
+            Container(gw, "api-gateway")
+            Container(svc, "8 микросервисов")
+            Container(kafka, "Kafka + Zookeeper")
+            Container(pg, "PostgreSQL 14")
+            Container(ts, "TimescaleDB")
+            Container(prom, "Prometheus")
+            Container(graf, "Grafana")
+            Container(jaeger, "Jaeger")
+        }
+    }
+    Deployment_Node(obj, "Object Storage", "бакет ML-моделей") {
+        Container(s3, "models/")
+    }
+    Deployment_Node(managed, "Managed Service (опц.)", "prod") {
+        Container(mkafka, "Yandex Managed Kafka")
+        Container(mpg, "Yandex Managed PostgreSQL")
+    }
+}
+
+Deployment_Node(ext, "Внешние") {
+    Container(sensors, "IoT-датчики")
+    Container(minek, "Минэкологии")
+}
+
+Rel(sensors, gw, "HTTPS")
+Rel(svc, obj, "S3 API")
+Rel(svc, minek, "HTTPS")
+
+note right of compose
+  Dev/Test/Stage: один VM + Compose.
+  Prod: постепенный перенос БД и Kafka
+  в managed-сервисы Yandex Cloud.
+end note
+
+@enduml
