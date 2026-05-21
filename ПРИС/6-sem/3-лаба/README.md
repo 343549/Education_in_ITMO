@@ -58,7 +58,8 @@
 
 ### 1.3. Контекстная диаграмма (System Context)
 
-![Контекстная диаграмма EcoGuardian](diagrams/context.png)
+<img width="844" height="737" alt="image" src="https://github.com/user-attachments/assets/4318e83b-6d4d-4faf-aaf1-7eab2ad165d7" />
+
 
 **Описание.** Система EcoGuardian находится в центре экосистемы: слева — поток данных от IoT-датчиков; справа — интеграция с **ИС Минэкологии** (отчёты, справочники), каналом SMS/e-mail и опционально метеослужбой. Пользователи: оператор регионального ЦУР, аналитик ведомства, специалист по реагированию. Все взаимодействия с UI идут через единую точку входа (API Gateway).
 
@@ -84,8 +85,8 @@
 ### 2.2. Доменные модели (ключевые агрегаты)
 
 **Catalog** — доменная модель каталога и телеметрии:
+<img width="442" height="899" alt="image" src="https://github.com/user-attachments/assets/0e9afe3b-8051-4e3c-8711-2c300e45601e" />
 
-![Доменная модель Catalog & Monitoring](diagrams/domain_catalog.png)
 
 **Risk Analytics**
 
@@ -123,8 +124,7 @@
 | `incident.opened` | incident-service | Минэкологии (ACL) | Начато реагирование |
 
 **Процесс 1: «Прогноз → оповещение»** — оператор инициирует анализ; analytics публикует `forecast.created`; alerting создаёт Alert и инициирует доставку.
-
-![Диаграмма последовательности: прогноз → оповещение → инцидент](diagrams/sequence_alert.png)
+<img width="1343" height="640" alt="image" src="https://github.com/user-attachments/assets/9360c201-d4bc-4f62-9e6b-bf39e5d5bca7" />
 
 **Процесс 2: «Оповещение → инцидент»** — команда `EscalateAlert`; incident-service создаёт Incident, связывает с Alert и Region; далее внутри агрегата добавляются EvacuationPlan и MitigationAction.
 
@@ -150,8 +150,7 @@
 | **incident-service** | Incident Response | Инциденты и планы | open incident, plans, actions | Incident, EvacuationPlan, MitigationAction |
 
 ### 3.2. Диаграмма взаимодействия сервисов
-
-![Контейнерная диаграмма микросервисов EcoGuardian](diagrams/services.png)
+<img width="1922" height="984" alt="image" src="https://github.com/user-attachments/assets/08a98307-5843-4aa1-993d-f6d094cb6021" />
 
 **Синхронные связи:** клиент → api-gateway → сервисы (REST/JSON). analytics-service → telemetry-service (агрегаты за окно времени). alerting-service → внешний SMS через ACL.
 
@@ -436,8 +435,8 @@ paths:
 | CI | GitLab CI / GitHub Actions | Сборка, тесты, push в Container Registry |
 
 ### 7.1.1. Диаграмма развёртывания
+<img width="1936" height="658" alt="image" src="https://github.com/user-attachments/assets/9a2a0302-756b-42b2-8bee-293412fc1395" />
 
-![Развёртывание в Yandex Cloud, Docker Compose](diagrams/deployment.png)
 
 ### 7.2. Архитектура окружений
 
